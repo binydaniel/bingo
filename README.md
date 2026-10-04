@@ -48,7 +48,6 @@ We have provided a default project structure to get you started. This is as foll
 | `src/game/config.ts`          | Shared game tuning constants: speeds, gravity, health, dimensions, and color palette. |
 | `src/game/levels.ts`          | ASCII layout matrices, grid tile size, and level progression maps.         |
 | `src/game/controls.ts`        | Universal dual-input controls: merges keyboard and Rex Virtual Joystick for mobile. |
-| `src/game/audio.ts`           | Procedural retro SFX presets powered by ZzFX (zero external audio dependencies). |
 | `public/style.css`            | Some simple CSS rules to help with page layout.                            |
 | `public/assets`               | Contains the static assets used by the game.                               |
 
@@ -127,7 +126,7 @@ preload ()
 }
 ```
 
-The template ships pre-packaged assets under `public/assets/` (letters `a`–`z`, fx particle textures, audio SFX/BGM loops, a vehicles sheet) — see the AVAILABLE ASSET MANIFEST comment at the top of `src/game/main.ts`. The template loads NO assets by default; add a `preload()` to the `Game` scene and load only what your game uses.
+This project has no bundled assets; add image and audio files under `public/assets/` and load them from a `preload()` in the `Game` scene in `src/game/main.ts`.
 
 When you issue the `bun run build` command, all static assets are automatically copied to the `dist/assets` folder.
 

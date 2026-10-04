@@ -127,7 +127,7 @@ function range(min: number, max: number): number[] {
     return out;
 }
 
-export function createBingoCard(): BingoCard {
+export function createBingoCard(serial?: number | null): BingoCard {
     const columns = COLUMN_LETTERS.map((letter) => {
         const [min, max] = COLUMN_RANGES[letter];
         return shuffle(range(min, max)).slice(0, 5);
@@ -143,8 +143,13 @@ export function createBingoCard(): BingoCard {
     }
     grid[2][2] = "FREE";
 
-    const serial = Math.floor(10000 + Math.random() * 89999);
-    return { id: `BG-${serial}`, grid };
+    // A serial handed in by the lobby pins the cartela identity; otherwise deal
+    // a random one.
+    const chosen = Number(serial);
+    const label = Number.isFinite(chosen) && chosen > 0
+        ? String(Math.floor(chosen)).padStart(5, "0")
+        : String(Math.floor(10000 + Math.random() * 89999));
+    return { id: `BG-${label}`, grid };
 }
 
 export function createDaubGrid(): boolean[][] {

@@ -69,6 +69,87 @@ html, body, #root {
     min-height: 0;
 }
 
+/* Lobby screen — select cartela */
+#lobby {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.16), transparent 55%),
+        linear-gradient(150deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.94));
+    backdrop-filter: blur(12px);
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.65);
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.lobby-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.lobby-title {
+    margin: 6px 0 0 0;
+    font-size: clamp(24px, 4vh, 36px);
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f8fafc;
+}
+
+.lobby-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lobby-hint {
+    margin: 0;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.lobby-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+    gap: 8px;
+}
+
+.lobby-cell {
+    --cell-color: #3b82f6;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(30, 41, 59, 0.85);
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.lobby-cell:hover {
+    transform: translateY(-2px);
+    border-color: var(--cell-color);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+}
+
+.lobby-cell:active {
+    transform: scale(0.95);
+}
+
 /* ------------------------------------------------------------------ */
 /* HEADER / STATUS PANEL                                               */
 /* ------------------------------------------------------------------ */
@@ -282,88 +363,6 @@ html, body, #root {
     text-transform: uppercase;
 }
 
-.caller-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    pointer-events: none;
-}
-
-.caller-ball {
-    --ball-color: #334155;
-    width: clamp(66px, 12vh, 104px);
-    height: clamp(66px, 12vh, 104px);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(26px, 5vh, 42px);
-    font-weight: 900;
-    color: #ffffff;
-    background: radial-gradient(circle at 32% 28%, #ffffff55, transparent 45%),
-        radial-gradient(circle at 50% 50%, var(--ball-color), color-mix(in srgb, var(--ball-color) 45%, #0b0f19));
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.14), 0 10px 30px rgba(0, 0, 0, 0.55);
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-    transition: transform 0.2s ease-out;
-}
-
-.caller-ball.live {
-    animation: ballPop 0.5s ease-out;
-}
-
-@keyframes ballPop {
-    0% { transform: scale(0.75); }
-    60% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-.caller-letter {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-}
-
-.history-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    max-width: 60%;
-}
-
-.history-ribbon {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.mini-ball {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: clamp(26px, 4.4vh, 38px);
-    height: clamp(26px, 4.4vh, 38px);
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 800;
-    color: #fff;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.history-empty {
-    font-size: 11px;
-    color: #64748b;
-}
-
-.stage-note {
-    font-size: 10px;
-    color: #94a3b8;
-    text-align: center;
-}
-
 .countdown-banner {
     position: absolute;
     inset: 0;
@@ -422,7 +421,7 @@ html, body, #root {
     flex: 1 1 auto;
     display: grid;
     gap: 10px;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr) minmax(0, 0.85fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     min-height: 0;
 }
 
@@ -440,6 +439,7 @@ html, body, #root {
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
     overflow: auto;
     min-height: 0;
+    flex: 1 1 0%;
 }
 
 .panel.shake {
@@ -491,7 +491,22 @@ html, body, #root {
 .cartela {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
+    gap: 4px;
+}
+
+/* Compact cartela: rows are driven by the panel height (not the cell width) so
+   all 25 squares are always on screen without scrolling. */
+.cartela-panel.compact .cartela {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+}
+
+.cartela-panel.compact .cartela-cell {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 24px;
+    font-size: clamp(10px, 1.8vh, 16px);
 }
 
 .cartela-head span {
@@ -612,14 +627,28 @@ html, body, #root {
     transform: scale(1.06);
 }
 
-/* FEED ------------------------------------------------------------- */
-.stat-row {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
+/* Master board shares the cartela's height: its 15 rows per column are driven
+   by the panel height so the panel never scrolls. */
+.matrix-panel .matrix {
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-.stat,
+.matrix-panel .matrix-col {
+    display: grid;
+    grid-template-rows: auto repeat(15, minmax(0, 1fr));
+    gap: 3px;
+    min-height: 0;
+}
+
+.matrix-panel .matrix-cell {
+    height: auto;
+    min-height: 0;
+    font-size: clamp(9px, 1.5vh, 11px);
+}
+
+/* The room activity panel was removed; .summary-cell / .stat-label /
+   .stat-value are still used by the round-summary modal. */
 .summary-cell {
     display: flex;
     flex-direction: column;
@@ -643,50 +672,6 @@ html, body, #root {
     font-weight: 900;
     color: #f8fafc;
     font-variant-numeric: tabular-nums;
-}
-
-.feed-list {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    overflow: auto;
-    min-height: 0;
-}
-
-.feed-item {
-    margin: 0;
-    font-size: 11px;
-    line-height: 1.35;
-    padding: 5px 7px;
-    border-radius: 8px;
-    background: rgba(15, 23, 42, 0.7);
-    border-left: 3px solid #475569;
-    color: #cbd5e1;
-}
-
-.feed-item.good {
-    border-left-color: #22c55e;
-    color: #bbf7d0;
-}
-
-.feed-item.bad {
-    border-left-color: #ef4444;
-    color: #fecaca;
-}
-
-.feed-time {
-    display: inline-block;
-    margin-right: 6px;
-    font-size: 9px;
-    font-weight: 700;
-    color: #64748b;
-    font-variant-numeric: tabular-nums;
-}
-
-.feed-empty {
-    margin: 0;
-    font-size: 11px;
-    color: #64748b;
 }
 
 /* ------------------------------------------------------------------ */
@@ -733,29 +718,6 @@ html, body, #root {
 @keyframes bingoPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); transform: scale(1); }
     50% { box-shadow: 0 0 24px 6px rgba(251, 191, 36, 0.55); transform: scale(1.015); }
-}
-
-.ready-btn {
-    flex: 0 1 30%;
-    padding: 13px 14px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    color: #e2e8f0;
-    background: rgba(30, 41, 59, 0.9);
-    border: 1px solid rgba(56, 189, 248, 0.5);
-    transition: all 0.15s;
-}
-
-.ready-btn:hover:not(:disabled) {
-    background: rgba(56, 189, 248, 0.18);
-}
-
-.ready-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 .cooldown-slot {
@@ -955,11 +917,18 @@ html, body, #root {
 
     .bingo-grid {
         grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto minmax(84px, 1fr) minmax(72px, 0.7fr);
+        grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
     }
 
     .cartela-cell { min-height: 30px; }
     .matrix-cell { height: 18px; font-size: 10px; }
+
+    /* Phones squeeze 15 board rows into a short column, so tighten the type,
+       row gap and letter so every digit stays inside its own cell. */
+    .matrix-panel .matrix { gap: 4px; }
+    .matrix-panel .matrix-col { gap: 1px; }
+    .matrix-panel .matrix-cell { font-size: 7.5px; border-radius: 4px; }
+    .matrix-panel .matrix-letter { font-size: 10px; padding-bottom: 0; }
     .claim-bar { flex-wrap: wrap; gap: 6px; }
     .bingo-btn { flex: 1 1 100%; font-size: 15px; padding: 11px; }
     .ready-btn { flex: 1 1 55%; }
@@ -967,10 +936,80 @@ html, body, #root {
 }
 
 @media (max-width: 420px) {
-    .stage-note { display: none; }
     .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-height: 520px) {
     .bingo-stage { display: none; }
+}
+.bingo-stage.compact {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding: 8px 12px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* The banners overlay the old tall stage; inside the compact bar they flow
+   inline as extra rows so they never get clipped. */
+.bingo-stage.compact .countdown-banner,
+.bingo-stage.compact .result-banner {
+    position: static;
+    inset: auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 8px;
+}
+
+.bingo-stage.compact .countdown-banner {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(2, 6, 23, 0.4);
+    border-radius: 8px;
+}
+
+.bingo-stage.compact .countdown-number {
+    font-size: 18px;
+    text-shadow: none;
+}
+
+.bingo-stage.compact .countdown-label {
+    font-size: 9px;
+}
+
+.bingo-stage.compact .result-banner {
+    text-align: left;
+    border-radius: 8px;
+    font-size: 11px;
+}
+
+.stage-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+}
+
+.stage-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: #f8fafc;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+    word-break: break-word;
+}
+
+.stage-calls {
+    font-size: 12px;
+    color: #cbd5e1;
+    max-width: 65vw;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }

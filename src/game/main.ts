@@ -39,6 +39,23 @@ export { GAME_CONFIG, GAME_WIDTH, GAME_HEIGHT, COLORS } from './config';
 // ---------------------------------------------------------------------------
 export const EventBus = new Events.EventEmitter();
 
+/**
+ * Cartela serial picked on the lobby screen. The React shell stores it here
+ * before booting Phaser so the very first card the scene deals already carries
+ * the identity the player chose. Null means "deal a random serial".
+ */
+let pendingCartelaSerial: number | null = null;
+
+export function setPendingCartelaSerial(serial: number | null): void {
+    pendingCartelaSerial = Number.isFinite(serial as number) && (serial as number) > 0
+        ? Math.floor(serial as number)
+        : null;
+}
+
+export function getPendingCartelaSerial(): number | null {
+    return pendingCartelaSerial;
+}
+
 export const EVENTS = {
     PHASE: 'phase-changed',
     BALL: 'ball-drawn',
@@ -48,7 +65,6 @@ export const EVENTS = {
     NEW_CARD: 'request-new-card',
     CARD: 'card-generated',
     AUTO_DAUB: 'auto-daub-toggled',
-    SOUND: 'sound-toggled',
     READY: 'player-ready',
     BET: 'bet-changed',
     RIVAL: 'rival-bingo',
@@ -134,6 +150,7 @@ export class Game extends Scene
 {
     private phase: BingoPhase = 'WAITING';
     private card!: BingoCard;
+    private cartelaSerial: number | null = null;
     private deck: number[] = [];
     private drawn: number[] = [];
     private drawnSet: Set<number> = new Set();
@@ -180,9 +197,6 @@ export class Game extends Scene
         this.load.image('ball_green', 'assets/2D-assets/puzzle_game_gfx/Balls/ball_green_shaded.png');
         this.load.image('ball_purple', 'assets/2D-assets/puzzle_game_gfx/Balls/ball_purple_shaded.png');
         this.load.image('bg_tile', 'assets/2D-assets/Pixel_Adventure/Background/Blue.png');
-        this.load.audio('sfx_ball_bounce', 'assets/Sounds_Pack/Items/tennis_ball_bounce_1.wav');
-        this.load.audio('sfx_daub', 'assets/Sounds_Pack/Items/gem_collect.wav');
-        this.load.audio('sfx_coin_win', 'assets/Sounds_Pack/Retro/coin.wav');
     }
 
     create ()
@@ -236,12 +250,11 @@ export class Game extends Scene
         EventBus.on(EVENTS.CLAIM, this.onClaim, this);
         EventBus.on(EVENTS.NEW_CARD, this.onNewCard, this);
         EventBus.on(EVENTS.AUTO_DAUB, this.onAutoDaub, this);
-        EventBus.on(EVENTS.SOUND, this.onSound, this);
-        EventBus.on('mute-toggled', this.onSound, this);
         EventBus.on(EVENTS.BET, this.onBet, this);
 
         // Deal the player a cartela straight away so the dashboard is never empty.
-        this.card = createBingoCard();
+        this.cartelaSerial = getPendingCartelaSerial();
+        this.card = createBingoCard(this.cartelaSerial);
         EventBus.emit(EVENTS.CARD, { grid: this.card.grid, cardId: this.card.id });
         EventBus.emit(EVENTS.LOBBY, { players: this.seats, room: this.room });
         this.setPhase('WAITING');
@@ -263,15 +276,12 @@ export class Game extends Scene
         {
             this.time.removeAllEvents();
             this.tweens.killAll();
-            this.sound.stopAll();
             this.scale.off('resize', this.onResize, this);
             this.autoStartTimer?.remove();
             EventBus.off(EVENTS.READY, this.onPlayerReady, this);
             EventBus.off(EVENTS.CLAIM, this.onClaim, this);
             EventBus.off(EVENTS.NEW_CARD, this.onNewCard, this);
             EventBus.off(EVENTS.AUTO_DAUB, this.onAutoDaub, this);
-            EventBus.off(EVENTS.SOUND, this.onSound, this);
-            EventBus.off('mute-toggled', this.onSound, this);
             EventBus.off(EVENTS.BET, this.onBet, this);
             this.balls = [];
         });
@@ -404,17 +414,6 @@ export class Game extends Scene
         });
     }
 
-    private playSfx (key: string, volume = 0.6)
-    {
-        try {
-            if (this.cache.audio.exists(key)) {
-                this.sound.play(key, { volume });
-            }
-        } catch {
-            /* autoplay guard */
-        }
-    }
-
     // -----------------------------------------------------------------------
     // ROUND ENGINE
     // -----------------------------------------------------------------------
@@ -501,7 +500,6 @@ export class Game extends Scene
         });
 
         this.animateDrawnBall(number);
-        this.playSfx('sfx_ball_bounce', 0.45);
 
         for (const rival of this.rivals) {
             rival.seen += 1;
@@ -602,7 +600,6 @@ export class Game extends Scene
         this.countdown.stop();
 
         this.setPhase('FINISHED');
-        this.playSfx(result.winner === 'You' ? 'sfx_coin_win' : 'sfx_ball_bounce', 0.6);
 
         EventBus.emit(EVENTS.SUMMARY, {
             ...result,
@@ -628,24 +625,13 @@ export class Game extends Scene
     private onNewCard ()
     {
         if (this.phase !== 'WAITING') return;
-        this.card = createBingoCard();
-        this.playSfx('sfx_daub', 0.35);
+        this.card = createBingoCard(this.cartelaSerial);
         EventBus.emit(EVENTS.CARD, { grid: this.card.grid, cardId: this.card.id });
     }
 
     private onAutoDaub (payload?: { enabled?: boolean })
     {
         this.autoDaub = Boolean(payload?.enabled);
-    }
-
-    private onSound (payload?: { muted?: boolean })
-    {
-        const muted = Boolean(payload?.muted);
-        try {
-            this.sound.setMute(muted);
-        } catch {
-            /* ignore */
-        }
     }
 
     private onBet (payload?: { amount?: number })

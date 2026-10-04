@@ -17,14 +17,12 @@ export interface GameModalProps {
     onSelectRoom?: (room: string) => void;
     onClose: () => void;
     onNextRound?: () => void;
-    muted?: boolean;
-    onToggleMute?: () => void;
 }
 
 const HELP_PAGES: Array<{ title: string; body: string }> = [
     {
         title: "1 · Take a cartela",
-        body: "Every 75-ball cartela stacks the B column with 1-15, I with 16-30, N with 31-45, G with 46-60 and O with 61-75. The centre square is a FREE mark that already counts as daubed.",
+        body: "Pick your cartela number in the lobby to join the room. Every 75-ball cartela stacks the B column with 1-15, I with 16-30, N with 31-45, G with 46-60 and O with 61-75. The centre square is a FREE mark that already counts as daubed.",
     },
     {
         title: "2 · Daub the calls",
@@ -49,8 +47,6 @@ export const GameModal = ({
     onSelectRoom,
     onClose,
     onNextRound,
-    muted,
-    onToggleMute,
 }: GameModalProps) => {
     const [page, setPage] = useState(0);
 
@@ -168,11 +164,6 @@ export const GameModal = ({
                             <button type="button" className="btn ghost" onClick={onClose}>
                                 BACK TO TABLE
                             </button>
-                            {onToggleMute && (
-                                <button type="button" className="btn ghost" onClick={onToggleMute}>
-                                    {muted ? "SOUND: OFF" : "SOUND: ON"}
-                                </button>
-                            )}
                         </div>
                     </>
                 )}
