@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/game/audio.ts","./src/game/config.ts","./src/game/controls.ts","./src/game/levels.ts","./src/game/main.ts","./src/game/particles.ts","./src/game/sound.ts","./src/game/state.ts","./src/ui/GameHUD.tsx","./src/ui/GameModal.tsx"],"version":"5.7.3"}
