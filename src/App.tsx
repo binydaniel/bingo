@@ -108,6 +108,10 @@ function App() {
         // Hand the lobby pick to the scene before it deals its first card.
         setPendingCartelaSerial(cartelaSerial);
 
+        // Render the picked card immediately. The lobby advertised this exact
+        // 5x5, so the panel must never flash a different card while Phaser boots.
+        if (cartelaSerial !== null) setCard(createBingoCard(cartelaSerial));
+
         if (phaserRef.current === null) {
             const game = StartGame("game-container");
             phaserRef.current = { game, scene: null };
@@ -355,6 +359,19 @@ function App() {
     }, []);
 
     const handleShowLobby = useCallback(() => {
+        setSummary(null);
+        setScreen("LOBBY");
+    }, []);
+
+    /** Summary modal "keep playing": close it and ask the scene for a new round. */
+    const handleNextRound = useCallback(() => {
+        setSummary(null);
+        EventBus.emit("player-ready");
+    }, []);
+
+    /** Summary modal "change cartela": back to the lobby picker. */
+    const handleSummaryChangeCartela = useCallback(() => {
+        setSummary(null);
         setScreen("LOBBY");
     }, []);
 
@@ -570,12 +587,14 @@ function App() {
                     />
                 )}
 
-                {summary && phase === "FINISHED" && (
+                {/* Stays up until the player picks: the scene no longer auto-advances. */}
+                {summary && (
                     <GameModal
                         type="SUMMARY"
                         summary={summary}
                         onClose={() => setSummary(null)}
-                        onNextRound={() => setSummary(null)}
+                        onNextRound={handleNextRound}
+                        onChangeCartela={handleSummaryChangeCartela}
                     />
                 )}
             </div>

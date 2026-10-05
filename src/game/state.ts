@@ -127,10 +127,43 @@ function range(min: number, max: number): number[] {
     return out;
 }
 
-export function createBingoCard(serial?: number | null): BingoCard {
+/**
+ * Deterministic PRNG (mulberry32). A cartela serial must always produce the
+ * same 5x5 layout so the lobby can show players the real card before it is
+ * dealt; `variant` lets "new cartela" re-roll the numbers under the same serial.
+ */
+function seededRandom(seed: number): () => number {
+    let a = seed >>> 0;
+    return () => {
+        a = (a + 0x6d2b79f5) >>> 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function seededShuffle<T>(items: T[], rand: () => number): T[] {
+    const out = items.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        const tmp = out[i];
+        out[i] = out[j];
+        out[j] = tmp;
+    }
+    return out;
+}
+
+export function createBingoCard(serial?: number | null, variant = 0): BingoCard {
+    const chosen = Number(serial);
+    const pinned = Number.isFinite(chosen) && chosen > 0;
+
+    // Pinned serials deal deterministically; unpinned cards stay random.
+    const rand = pinned ? seededRandom(Math.floor(chosen) * 7919 + variant * 104729 + 1) : Math.random;
+
     const columns = COLUMN_LETTERS.map((letter) => {
         const [min, max] = COLUMN_RANGES[letter];
-        return shuffle(range(min, max)).slice(0, 5);
+        return seededShuffle(range(min, max), rand).slice(0, 5);
     });
 
     const grid: BingoCell[][] = [];
@@ -143,10 +176,7 @@ export function createBingoCard(serial?: number | null): BingoCard {
     }
     grid[2][2] = "FREE";
 
-    // A serial handed in by the lobby pins the cartela identity; otherwise deal
-    // a random one.
-    const chosen = Number(serial);
-    const label = Number.isFinite(chosen) && chosen > 0
+    const label = pinned
         ? String(Math.floor(chosen)).padStart(5, "0")
         : String(Math.floor(10000 + Math.random() * 89999));
     return { id: `BG-${label}`, grid };

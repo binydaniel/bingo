@@ -17,6 +17,7 @@ export interface GameModalProps {
     onSelectRoom?: (room: string) => void;
     onClose: () => void;
     onNextRound?: () => void;
+    onChangeCartela?: () => void;
 }
 
 const HELP_PAGES: Array<{ title: string; body: string }> = [
@@ -47,6 +48,7 @@ export const GameModal = ({
     onSelectRoom,
     onClose,
     onNextRound,
+    onChangeCartela,
 }: GameModalProps) => {
     const [page, setPage] = useState(0);
 
@@ -55,12 +57,15 @@ export const GameModal = ({
     }, [type]);
 
     useEffect(() => {
+        // The round summary deliberately ignores ESC — the room waits for the
+        // player to choose between the next round and the cartela lobby.
+        if (type === "SUMMARY") return;
         const onKey = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
-    }, [onClose]);
+    }, [onClose, type]);
 
     const safePage = Math.max(0, Math.min(page, HELP_PAGES.length - 1));
     const current = HELP_PAGES[safePage];
@@ -111,12 +116,12 @@ export const GameModal = ({
                         <h3 className={`modal-title ${won ? "good" : ""}`}>
                             {won ? "BINGO!" : summary?.winner ? `You lost` : "No winner this round"}
                         </h3>
+
+                        <p className="modal-body">Waiting for your call — play on, or head back to pick another cartela.</p>
                         <div className="modal-row">
-                            <button type="button" className="btn success" onClick={onNextRound}>
-                                NEXT ROUND
-                            </button>
-                            <button type="button" className="btn ghost" onClick={onClose}>
-                                STAY IN LOBBY
+
+                            <button type="button" className="btn primary" onClick={onChangeCartela}>
+                                PICK CARTELA
                             </button>
                         </div>
                     </>

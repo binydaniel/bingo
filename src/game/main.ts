@@ -151,6 +151,8 @@ export class Game extends Scene
     private phase: BingoPhase = 'WAITING';
     private card!: BingoCard;
     private cartelaSerial: number | null = null;
+    /** Bumped by NEW CARTELA so a re-deal keeps the serial but changes numbers. */
+    private cartelaVariant = 0;
     private deck: number[] = [];
     private drawn: number[] = [];
     private drawnSet: Set<number> = new Set();
@@ -163,7 +165,6 @@ export class Game extends Scene
 
     private countdown = new CountdownTimer();
     private drawTimer?: Phaser.Time.TimerEvent;
-    private summaryTimer?: Phaser.Time.TimerEvent;
     private lobbyTimer?: Phaser.Time.TimerEvent;
     private stirTimer?: Phaser.Time.TimerEvent;
     private autoStartTimer?: Phaser.Time.TimerEvent;
@@ -426,7 +427,10 @@ export class Game extends Scene
 
     private onPlayerReady ()
     {
-        if (this.phase !== 'WAITING') return;
+        // Reachable from WAITING (first round) and from FINISHED, where the
+        // summary modal's "keep playing" action asks for the next round.
+        if (this.phase !== 'WAITING' && this.phase !== 'FINISHED') return;
+        if (this.phase === 'FINISHED') this.returnToLobby();
         this.startCountdown();
     }
 
@@ -602,12 +606,8 @@ export class Game extends Scene
             prizePool: Math.round(Math.max(1, this.seats) * this.bet * 0.8),
         });
 
-        this.summaryTimer?.remove();
-        this.summaryTimer = this.time.addEvent({
-            delay: BINGO_CONFIG.summarySeconds * 1000,
-            callback: this.returnToLobby,
-            callbackScope: this,
-        });
+        // No auto-advance: the room waits in FINISHED until the player either
+        // starts the next round or leaves for the cartela lobby.
     }
 
     private returnToLobby ()
@@ -619,8 +619,13 @@ export class Game extends Scene
 
     private onNewCard ()
     {
-        if (this.phase !== 'WAITING') return;
-        this.card = createBingoCard(this.cartelaSerial);
+        // Re-deal is allowed whenever a round is not actively drawing. The scene
+        // now parks in FINISHED until the player chooses, so accepting
+        // COUNTDOWN/FINISHED keeps NEW CARTELA usable from the room.
+        if (this.phase === 'RUNNING') return;
+        // Same serial, fresh numbers.
+        this.cartelaVariant += 1;
+        this.card = createBingoCard(this.cartelaSerial, this.cartelaVariant);
         EventBus.emit(EVENTS.CARD, { grid: this.card.grid, cardId: this.card.id });
     }
 

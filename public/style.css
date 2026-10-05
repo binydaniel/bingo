@@ -150,6 +150,184 @@ html, body, #root {
     transform: scale(0.95);
 }
 
+/* The cell currently shown in the preview panel. */
+.lobby-cell.previewing {
+    border-color: var(--cell-color);
+    box-shadow: 0 0 0 2px var(--cell-color), 0 10px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* Picker on the left, live 5x5 preview on the right. */
+.lobby-top {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.lobby-picker {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lobby-preview {
+    flex: 0 0 clamp(190px, 22vw, 250px);
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.88));
+}
+
+.lobby-preview-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.lobby-preview-label {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    color: #94a3b8;
+}
+
+.lobby-preview-id {
+    font-size: 12px;
+    font-weight: 900;
+    color: #f8fafc;
+    font-variant-numeric: tabular-nums;
+}
+
+.lobby-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3px;
+}
+
+.lobby-preview-grid > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 26px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+/* The first five spans are the B/I/N/G/O column letters. */
+.lobby-preview-grid > span:nth-child(-n + 5) {
+    min-height: 0;
+    background: none;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+}
+
+.lobby-preview-cell {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #e2e8f0;
+}
+
+.lobby-preview-cell.free {
+    background: linear-gradient(135deg, #fde68a, #f59e0b);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #1c1917;
+    font-size: 8px;
+    letter-spacing: 0.04em;
+}
+
+.lobby-preview-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.lobby-take {
+    width: 100%;
+}
+
+/* Seat-hold overlay shown while waiting for the other players. */
+.lobby-waiting {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(2, 6, 23, 0.82);
+    backdrop-filter: blur(6px);
+}
+
+.lobby-waiting-card {
+    width: min(360px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: linear-gradient(160deg, rgba(15, 23, 42, 0.97), rgba(2, 6, 23, 0.95));
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.lobby-countdown {
+    font-size: 58px;
+    font-weight: 900;
+    line-height: 1;
+    color: #f8fafc;
+    font-variant-numeric: tabular-nums;
+}
+
+.lobby-kicker {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    color: #38bdf8;
+}
+
+.lobby-waiting-title {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #f8fafc;
+}
+
+.lobby-waiting-body {
+    margin: 0;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.lobby-progress {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(30, 41, 59, 0.9);
+    overflow: hidden;
+}
+
+.lobby-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #38bdf8, #22d3ee);
+    transition: width 0.1s linear;
+}
+
 /* ------------------------------------------------------------------ */
 /* HEADER / STATUS PANEL                                               */
 /* ------------------------------------------------------------------ */
@@ -915,6 +1093,16 @@ html, body, #root {
 
     .chip { padding: 4px 8px; }
     .chip-value { font-size: 12px; }
+
+    /* Stack the preview under the picker and keep the tap targets big enough
+       for fingers. */
+    .lobby-top { flex-direction: column-reverse; gap: 12px; }
+    .lobby-preview { position: static; width: 100%; flex: 1 1 auto; }
+    .lobby-preview-grid > span { min-height: 32px; font-size: 12px; }
+    .lobby-preview-cell.free { font-size: 9px; }
+    .lobby-grid { grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); gap: 6px; }
+    .lobby-cell { padding: 12px 4px; font-size: 14px; }
+    .lobby-countdown { font-size: 50px; }
 
     .header-actions { margin-left: 0; width: 100%; justify-content: space-between; }
 
