@@ -152,7 +152,7 @@ function App() {
 
         const onCard = (payload: { grid?: BingoCard["grid"]; cardId?: string }) => {
             if (!payload?.grid) return;
-            setCard({ id: payload.cardId ?? "BG-00000", grid: payload.grid });
+            setCard({ id: payload.cardId ?? "", grid: payload.grid });
             setDaubed(createDaubGrid());
         };
 
@@ -404,7 +404,7 @@ function App() {
                                 balance={balance}
                                 bet={bet}
                                 onBetChange={handleBetChange}
-                                cardId={card?.id ?? "BG-00000"}
+                                cardId={card?.id ?? ""}
                                 autoDaub={autoDaub}
                                 onToggleAutoDaub={handleToggleAutoDaub}
                                 onNewCard={handleNewCard}
@@ -443,7 +443,7 @@ function App() {
                                     <header className="panel-head">
                                         <h2>Your Cartela</h2>
                                         <span className="panel-tag">
-                                            {card?.id} · {drawn.length} called
+                                            {card?.id}
                                         </span>
                                     </header>
 
@@ -478,7 +478,7 @@ function App() {
                                                         onClick={() => handleCellClick(r, c)}
                                                         aria-label={isFree ? "Free square" : `Cell ${String(value)}`}
                                                     >
-                                                        {isFree ? "FREE" : value}
+                                                        {isFree ? "" : value}
                                                     </button>
                                                 );
                                             }),

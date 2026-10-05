@@ -421,9 +421,14 @@ html, body, #root {
     flex: 1 1 auto;
     display: grid;
     gap: 10px;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     min-height: 0;
 }
+
+/* Master board sits on the left, your cartela on the right. Visual order only —
+   the DOM keeps cartela first so the markup stays logical. */
+.matrix-panel { order: 1; }
+.cartela-panel { order: 2; }
 
 .panel {
     position: relative;
@@ -679,7 +684,8 @@ html, body, #root {
 /* ------------------------------------------------------------------ */
 .claim-bar {
     flex: 0 0 auto;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     gap: 10px;
     padding: 8px 10px;
@@ -690,8 +696,11 @@ html, body, #root {
     pointer-events: auto;
 }
 
+/* Dead centre: the button is the only item in the middle grid column, flanked by
+   an empty spacer on the left and the hint/cooldown slot on the right. */
 .bingo-btn {
-    flex: 1 1 40%;
+    grid-column: 2;
+    justify-self: center;
     padding: 13px 18px;
     border: none;
     border-radius: 12px;
@@ -721,7 +730,7 @@ html, body, #root {
 }
 
 .cooldown-slot {
-    flex: 1 1 30%;
+    grid-column: 3;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -929,14 +938,14 @@ html, body, #root {
     .matrix-panel .matrix-col { gap: 1px; }
     .matrix-panel .matrix-cell { font-size: 7.5px; border-radius: 4px; }
     .matrix-panel .matrix-letter { font-size: 10px; padding-bottom: 0; }
-    .claim-bar { flex-wrap: wrap; gap: 6px; }
-    .bingo-btn { flex: 1 1 100%; font-size: 15px; padding: 11px; }
-    .ready-btn { flex: 1 1 55%; }
-    .cooldown-slot { flex: 1 1 35%; }
+    /* One column on phones: full-width button with the hint stacked under it. */
+    .claim-bar { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .bingo-btn { grid-column: 1; width: 100%; font-size: 15px; padding: 11px; }
+    .cooldown-slot { grid-column: 1; }
 }
 
 @media (max-width: 420px) {
-    .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-height: 520px) {

@@ -109,27 +109,8 @@ export const GameModal = ({
                             {won ? "ROUND WON" : "ROUND CLOSED"}
                         </div>
                         <h3 className={`modal-title ${won ? "good" : ""}`}>
-                            {won ? "BINGO! You took the pot" : summary?.winner ? `${summary.winner} took the pot` : "No winner this round"}
+                            {won ? "BINGO!" : summary?.winner ? `You lost` : "No winner this round"}
                         </h3>
-                        <p className="modal-body">{summary?.message ?? "Round complete."}</p>
-                        <div className="summary-grid">
-                            <div className="summary-cell">
-                                <span className="stat-label">PATTERN</span>
-                                <span className="stat-value">{summary?.pattern ?? "—"}</span>
-                            </div>
-                            <div className="summary-cell">
-                                <span className="stat-label">YOUR PAYOUT</span>
-                                <span className="stat-value">${won ? (summary?.prize ?? 0) : 0}</span>
-                            </div>
-                            <div className="summary-cell">
-                                <span className="stat-label">PRIZE POOL</span>
-                                <span className="stat-value">${summary?.prizePool ?? 0}</span>
-                            </div>
-                            <div className="summary-cell">
-                                <span className="stat-label">BALLS CALLED</span>
-                                <span className="stat-value">{summary?.drawn ?? 0}</span>
-                            </div>
-                        </div>
                         <div className="modal-row">
                             <button type="button" className="btn success" onClick={onNextRound}>
                                 NEXT ROUND

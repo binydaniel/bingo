@@ -23,8 +23,6 @@ export interface CartelaLobbyProps {
  */
 export const CartelaLobby = ({ balance, bet, onSelect }: CartelaLobbyProps) => (
     <div id="lobby">
-
-
         <p className="lobby-hint">Pick a cartela number to take your seat in the room.</p>
 
         <div className="lobby-grid">
@@ -38,7 +36,7 @@ export const CartelaLobby = ({ balance, bet, onSelect }: CartelaLobbyProps) => (
                     title={`Cartela ${serial} · buy-in $${bet}`}
                     aria-label={`Select cartela ${serial}`}
                 >
-                    {String(serial).padStart(3, "0")}
+                    {serial}
                 </button>
             ))}
         </div>

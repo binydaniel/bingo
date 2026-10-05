@@ -158,7 +158,6 @@ export class Game extends Scene
     private backplate?: Phaser.GameObjects.TileSprite;
     private machine?: Phaser.GameObjects.Graphics;
     private spotlight?: Phaser.GameObjects.Arc;
-    private goalRing?: Phaser.GameObjects.Arc;
     private balls: Phaser.Physics.Arcade.Image[] = [];
     private walls!: Phaser.Physics.Arcade.StaticGroup;
 
@@ -220,12 +219,9 @@ export class Game extends Scene
         this.layout();
         this.physics.add.collider(this.balls, this.walls, undefined, undefined, this);
 
-        // Persistent gold jackpot ring at the blower centre — every called ball
-        // lands inside it. This is the round's win-goal marker (named 'goal').
-        this.goalRing = this.add.circle(this.geom.center.x, this.geom.center.y, 56, 0xfbbf24, 0.07)
-            .setStrokeStyle(2, 0xfbbf24, 0.32)
-            .setDepth(-1)
-            .setName('goal');
+        // NOTE: the old gold "goal ring" at the blower centre was removed — it
+        // bled through the translucent Master Board panel as a stray yellow
+        // disc behind the panel heading.
 
         this.scale.on('resize', this.onResize, this);
 
@@ -347,7 +343,6 @@ export class Game extends Scene
 
         this.backplate?.setSize(width, height);
         this.physics.world.setBounds(0, 0, width, height);
-        this.goalRing?.setPosition(this.geom.center.x, this.geom.center.y);
 
         this.walls.clear(true, true);
         const thickness = 12;
